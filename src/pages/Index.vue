@@ -1,0 +1,139 @@
+<template>
+  <q-page class="flex indexPage">
+    <!-- 拖动效果 -->
+    <q-splitter
+      v-model="splitterWidthValue"
+      :limits="splitterLimits"
+      class="full-width"
+      unit="%"
+      separator-class="bg-transparent"
+      before-class="overflow-hidden"
+      after-class="hide-scrollbar"
+    >
+      <!-- 左侧列表 -->
+      <template v-slot:before>
+        <!-- 动画效果 -->
+        <transition
+          appear
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+        >
+          <Sidebar></Sidebar>
+        </transition>
+      </template>
+      <!-- 右侧主内容区 -->
+      <template v-slot:after>
+        <div class="full-height">
+          <!-- muya -->
+          <!-- 代码编辑器 --> 
+          <div class="my_dom" v-show="!isSourceMode">
+            <muya></muya>
+          </div>
+          <!--代码展示编辑器-->
+          <div v-if="isSourceMode" class="monaco_dom">
+            <monaco
+            ref="monaco"
+            v-if="containerReload"
+            :opts="opts"
+            @change="changeValue"
+            :isDiff="isDiff"
+            :height="600"
+            ></monaco>
+          </div>
+
+          <!-- 动画效果 组，包含多个元素-->
+          <!--右侧按钮组 -->
+          <div class="rgBtnBlock">
+            <transition
+              appear
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+            >
+              <RightBtnList></RightBtnList>
+            </transition>
+          </div>
+        </div>
+      </template>
+    </q-splitter>
+  </q-page>
+</template>
+
+<script>
+import monaco from "../components/MonacoView.vue";
+import Sidebar from "../components/Sidebar.vue";
+import RightBtnList from "../components/RightBtnList.vue";
+import muya from "../components/muyaView.vue"
+import bus from '../components/bus'
+import { createNamespacedHelpers } from "vuex";
+const { mapState: mapSettingState, mapActions: mapSettingActions } =
+  createNamespacedHelpers("setting");
+export default {
+  name: "PageIndex",
+  components: {
+    muya,
+    monaco,
+    Sidebar,
+    RightBtnList,
+  },
+  data() {
+    return {
+      opts: {
+        value: "3333",
+        readOnly: false, // 是否可编辑
+        language: "markdown", // 语言类型
+        theme: "vs-dark", // 编辑器主题
+      },
+      isDiff: false,
+      containerReload: true,
+      splitterWidthValue: 30,
+      splitterLimits: [0, 60],
+      muyaData:{}
+      // isShow:false
+    };
+  },
+  computed: {
+    ...mapSettingState(["isSideBarShow", "isSourceMode"]),
+  },
+  provide() {
+    return {
+      reload: this.reload,
+    };
+  },
+  watch: {
+    isSideBarShow: function (currentData) {
+      if (currentData) {
+        this.splitterLimits = [0, 60];
+        this.splitterWidthValue = 30;
+      } else {
+        this.splitterLimits = [0, 0];
+        this.splitterWidthValue = 0;
+      }
+    },
+  },
+  methods: {
+    changeValue(val) {
+      console.log(val);
+      bus.$emit('muyaData',val)
+    },
+    changeMode() {},
+    async reload() {
+      this.containerReload = false;
+      await this.$nextTick();
+      this.containerReload = true;
+    },
+  },
+};
+</script>
+<style>
+.my_dom{
+  height: 93.5vh;
+  overflow: auto;
+}
+.monaco_dom{
+  max-width: 85%;
+  min-width: 400px;
+  min-height: 100%;
+  height: 90vh;
+  margin: 0 auto;
+}
+</style>
