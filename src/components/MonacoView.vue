@@ -36,7 +36,7 @@ export default {
       // 主要配置
       defaultOpts: {
         value: '', // 编辑器的值
-        theme: 'vs-dark', // 编辑器主题：vs, hc-black, or vs-dark，更多选择详见官网
+        theme: '', // 编辑器主题：vs, hc-black, or vs-dark，更多选择详见官网
         roundedSelection: true, // 右侧不显示编辑器预览框
         autoIndent: true // 自动缩进
       },
@@ -69,6 +69,23 @@ export default {
       // if (!this.isDiff) {
         // 初始化编辑器实例
         this.monacoEditor = monaco.editor.create(this.$refs.container, editorOptions)
+        monaco.editor.defineTheme('Memocast-Light', {
+        base: 'vs',
+        inherit: true,
+        rules: [{ background: '#ffffff' }],
+        colors: {
+          // 相关颜色属性配置
+          'editor.foreground': '#000000',
+          'editor.background': '#ffffff',
+          'editorCursor.foreground': '#FFCC00',
+          'editor.lineHighlightBackground': '#0000FF20',
+          'editorLineNumber.foreground': '#008800',
+          'editor.selectionBackground': '#88000030',
+          'editor.inactiveSelectionBackground': '#88000015'
+        }
+      })
+      monaco.editor.setTheme('CodeSampleTheme')
+
         // 编辑器内容发生改变时触发
         this.monacoEditor.onDidChangeModelContent(() => {
           this.$emit('change', this.monacoEditor.getValue())
