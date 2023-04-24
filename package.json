@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
+    
     "dev": "quasar dev",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa"
@@ -16,6 +17,7 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^1.2.1",
     "core-js": "^3.6.5",
+    "dotenv": "^16.0.3",
     "execall": "^3.0.0",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "monaco-editor": "^0.25.2",
@@ -29,7 +31,8 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "@quasar/app": "^2.0.0"
+    "@quasar/app": "^2.0.0",
+    "mockjs": "^1.1.0"
   },
   "browserslist": [
     "ie >= 11",

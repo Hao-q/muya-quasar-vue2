@@ -24,6 +24,7 @@ module.exports = function (/* ctx */) {
     boot: [
       'i18n',
       'axios',
+      'mock'
       // 'monaco'
     ],
 
@@ -46,10 +47,13 @@ module.exports = function (/* ctx */) {
       'material-icons', // optional, you are not bound to it
     ],
 
+    env: {
+      BASE_API: process.env.BASE_API
+    },
     // Full list of options: https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
-
+      env: require('dotenv').config().parsed,
       // transpile: false,
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
@@ -77,7 +81,9 @@ module.exports = function (/* ctx */) {
     devServer: {
       https: false,
       port: 8080,
-      open: true // opens browser window automatically
+      open: true,// opens browser window automatically
+      before: require('./mock/mock-server.js')
+
     },
 
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework

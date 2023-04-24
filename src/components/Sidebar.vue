@@ -1,105 +1,293 @@
 <template>
   <div class="scroll bg-grey-3 full-height">
     <q-scroll-area class="full-height">
+      <div class="q-pa-md" v-show="isShowSearch" >
+        <q-input  outlined   v-model="searchVal">
+        <template v-slot:prepend>
+          <q-icon name="search"  />
+        </template>
+        <template v-slot:append>
+          <q-icon name="close" @click="showAndHideSearch" class="cursor-pointer" />
+        </template>
+      </q-input>
+      </div>
       <q-list>
-        <q-item clickable v-ripple="{ color: '#212121' }" v-for="(item, index) in listitems" @click="toDetails(item)" :key="index">
+        <q-item
+          clickable
+          v-ripple="{ color: '#212121' }"
+          v-for="(item, index) in listitems"
+          @click="toDetails(item)"
+          :key="index"
+        >
           <q-item-section>
-            <div @contextmenu="(e) => noteItemContextMenuHandler(e, noteField)" class="sidebar_list">
-              <div class='note-item-title' v-html='item.title'></div>
+            <div
+              @contextmenu.prevent="openMenu($event, item)"
+              class="sidebar_list"
+            >
+              <div class="note-item-title" v-html="item.title"></div>
 
-              <div class='note-item-summary text-grey-7' v-html='item.summary'></div>
+              <div
+                class="note-item-summary text-grey-7"
+                v-html="item.summary"
+              ></div>
 
-              <div class='flex justify-between no-wrap overflow-hidden fa-align-center text-grey-7'>
-                <span class='text-left note-info-tag'><q-icon name='category' size='17px' /> {{ '文件夹' }}</span>
-                <span class='text-right note-info-tag'><q-icon name='timer' size='17px' /> {{ '2022-1-1' }}</span>
+              <div
+                class="flex justify-between no-wrap overflow-hidden fa-align-center text-grey-7"
+              >
+                <span class="text-left note-info-tag"
+                  ><q-icon name="category" size="17px" /> {{ "文件夹" }}</span
+                >
+                <span class="text-right note-info-tag"
+                  ><q-icon name="timer" size="17px" /> {{ "2022-1-1" }}</span
+                >
               </div>
             </div>
           </q-item-section>
         </q-item>
       </q-list>
     </q-scroll-area>
-    <q-btn  
-    style="bottom: 30px;right: 20px;"
-     class="absolute-bottom-right fab-btn" 
-     size="lg"
-     round color="primary"  
-     @click="addNoteHandler"
-     icon="note_add" >
-     <q-tooltip
-            anchor="center right"
-            self="center left"
-            :offset="[10, 10]"
-            content-class=" text-white shadow-4  text-h7"
-            >创建笔记</q-tooltip>
-     </q-btn>
+    <q-btn
+      style="bottom: 30px; right: 20px"
+      class="absolute-bottom-right fab-btn"
+      size="lg"
+      round
+      color="primary"
+      @click="addNoteHandler"
+      icon="note_add"
+    >
+      <q-tooltip
+        anchor="center right"
+        self="center left"
+        :offset="[10, 10]"
+        content-class=" text-white shadow-4  text-h7"
+        >创建笔记</q-tooltip
+      >
+    </q-btn>
+    <ul
+      class="contextmenu"
+      v-show="menuVisible"
+      :style="{ left: menuLf + 'px', top: menuTp + 'px' }"
+    >
+      <li @click.prevent="rename">重命名</li>
+      <li @click.prevent="fileMove">移动</li>
+      <li class="export">
+        导出
+        <div class="menu_export">
+          <p @click.prevent="exportMarkdown">Markdown</p>
+          <p @click.prevent="exportPng">PNG</p>
+        </div>
+      </li>
+      <li @click.prevent="fileDelete">删除</li>
+    </ul>
+    <q-dialog
+      v-model="fileMoveVisible"
+      ref="dialog"
+      transition-show="fade"
+      transition-hide="fade"
+      class="base-dialog"
+    >
+      <q-card style="min-width: 400px">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">移动笔记</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section>
+          <div class="q-pa-md">
+            <q-option-group
+              :options="options"
+              type="radio"
+              v-model="fileType"
+            />
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const {
+  mapState: mapSettingState,
+  mapActions: mapSettingActions
+} = createNamespacedHelpers('setting')
 export default {
   data() {
     return {
-      listitems: [{
-        title:'标题',
-        summary:'在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！'
-      },{
-        title:'标题',
-        summary:'在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！'
-      },{
-        title:'标题',
-        summary:'在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！'
-      },{
-        title:'标题',
-        summary:'在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！'
-      },{
-        title:'标题',
-        summary:'在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！'
-      },],
-    }
+      listitems: [
+        {
+          title: "标题",
+          summary:
+            "在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！",
+        },
+        {
+          title: "标题",
+          summary:
+            "在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！",
+        },
+        {
+          title: "标题",
+          summary:
+            "在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！",
+        },
+        {
+          title: "标题",
+          summary:
+            "在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！",
+        },
+        {
+          title: "标题",
+          summary:
+            "在手机上的浏览器里看到有价值的网页时，点击底端的 **分享按钮**，选择 **为知笔记**，网页内容就保存到为知笔记啦！",
+        },
+      ],
+      menuVisible: false,
+      menuLf: 0,
+      menuTp: 0,
+      currentNoteItem: {},
+      fileMoveVisible: false,
+      fileType: "文件夹1",
+      options: [
+        { label: "文件夹1", value: "文件夹1" },
+        { label: "文件夹2", value: "文件夹2" },
+        { label: "文件夹3", value: "文件夹3" },
+      ],
+      searchVal:''
+    };
+  },
+  computed:{
+    ...mapSettingState(['isShowSearch'])
   },
   methods: {
-    noteItemContextMenuHandler(){
-
+    openMenu(e, item) {
+      this.currentNoteItem = item;
+      console.log(item);
+      let x = e.pageX;
+      let y = e.pageY;
+      this.menuLf = x;
+      this.menuTp = y;
+      this.menuVisible = true;
     },
-    toDetails(item){
+    showAndHideSearch(){
+      this.searchVal = ''
+      this.$store.commit('setting/click_toogle_search', !this.isShowSearch)
+    },
+    rename() {
+      this.menuVisible = false;
+      this.$q
+        .dialog({
+          title: "重命名笔记",
+          prompt: {
+            model: "新建笔记.md",
+            type: "text",
+            attrs: {
+              spellcheck: false,
+            },
+            label: "标题",
+          },
+          ok: "确认",
+          cancel: "取消",
+        })
+        .onOk((data) => {
+          // this.createNote(data)
+        });
+    },
+    fileMove() {
+      this.menuVisible = false;
+      this.fileMoveVisible = true;
+    },
+    fileDelete() {
+      this.menuVisible = false;
+      this.$q
+        .dialog({
+          title: "删除笔记",
+          ok: "确认",
+          cancel: "取消",
+        })
+        .onOk(() => {});
+    },
+    toDetails(item) {
       console.log(item);
     },
     // 创建笔记
-    addNoteHandler(){
+    addNoteHandler() {
       console.log(22);
       this.$q
         .dialog({
-          title: '创建笔记',
+          title: "创建笔记",
           prompt: {
             model: "新建笔记.md",
-            type: 'text',
+            type: "text",
             attrs: {
-              spellcheck: false
+              spellcheck: false,
             },
-            label:"标题"
+            label: "标题",
           },
-          ok: '确认',
-          cancel: '取消'
+          ok: "确认",
+          cancel: "取消",
         })
-        .onOk(data => {
+        .onOk((data) => {
           // this.createNote(data)
-        })
-    }
-  }
-}
-
+        });
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
-.note-item-title{
+.note-item-title {
   font-size: 18px;
   padding-bottom: 6px;
   font-weight: 900;
   color: #3e3d3d;
 }
-.note-item-summary{
+.note-item-summary {
   padding-bottom: 8px;
 }
-.sidebar_list{
+.sidebar_list {
   padding: 10px 12px;
+}
+.contextmenu {
+  margin: 0;
+  background: #fff;
+  z-index: 3000;
+  position: fixed; //关键样式设置固定定位
+  list-style-type: none;
+  padding: 5px 0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #333;
+  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+  .export {
+    position: relative;
+    &:hover .menu_export {
+      display: block;
+    }
+  }
+  .menu_export {
+    display: none;
+    position: absolute;
+    left: 68px;
+    background: #fff;
+    top: 0;
+    border-radius: 4px;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+    p {
+      padding: 7px 16px;
+      &:hover {
+        background: #eee;
+      }
+    }
+  }
+  li {
+    margin: 0;
+    padding: 7px 16px;
+    cursor: pointer;
+  }
+  li:hover {
+    background: #eee;
+  }
 }
 </style>

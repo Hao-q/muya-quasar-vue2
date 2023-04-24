@@ -1,7 +1,22 @@
 <template>
     <q-header class="header bg-black">
       <!-- 3333 -->
-      <div class="text-grey">
+      <div class="text-grey show-left" >
+        <q-btn
+        icon='pageview'
+              dense
+              flat
+              round
+              class='fab-icon cursor-pointer material-icons-round '
+              size='md'
+              color='#26A69A'
+              v-ripple
+              @click="showAndHideSearch"
+              key='format_align_center'
+            />
+      </div>
+      
+      <div class="text-grey show-hide">
 
         <!-- <div>{{ store.counter  }} {{counter }}</div> -->
         <q-btn
@@ -22,11 +37,11 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
+import { getUserInfo } from 'src/api/setting'
 const {
   mapState: mapSettingState,
   mapActions: mapSettingActions
 } = createNamespacedHelpers('setting')
-console.log(createNamespacedHelpers('setting'));
 export default {
   data(){
     return{
@@ -34,21 +49,33 @@ export default {
     }
   },
   computed:{
-    ...mapSettingState(['isSideBarShow'])
+    ...mapSettingState(['isSideBarShow','isShowSearch'])
+  },
+  created(){
+    this.getUserInfoData()
   },
   methods:{
     showAndHide: function(){
-      console.log(this.isSideBarShow);
-      this.$store.commit('setting/click_tabs_side',!this.isSideBarShow)
-      console.log(this.isSideBarShow);
-
-      
+      this.$store.commit('setting/click_tabs_side',!this.isSideBarShow)   
     },
+    async getUserInfoData(){
+      await getUserInfo('/list/risk').then(res=>{
+        console.log(res);
+      })
+    },
+    showAndHideSearch(){
+      this.$store.commit('setting/click_toogle_search', !this.isShowSearch)
+    }
   }
 }
 </script>
 <style scoped lang="scss">
-.text-grey{
+.show-left{
+  float: left;
+  padding: 0 20px;
+  margin: 10px 0;
+}
+.show-hide{
   float: right;
   padding: 0 20px;
   margin: 10px 0;

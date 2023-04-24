@@ -10,3 +10,6 @@ export const click_toggle_left_drawer=(state, payload)=>{
 export const click_enable_preview_editor =(state, payload) =>{
   state.enablePreviewEditor = payload
 }
+export const click_toogle_search =(state, payload) =>{
+  state.isShowSearch = payload
+}

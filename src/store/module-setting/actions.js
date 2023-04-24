@@ -7,3 +7,6 @@ export const clickTabRightMode=({ commit, isSourceMode }) =>{
 export const clickToggleLeftDrawer=({ commit, toggleLeftDrawer })=> {
   commit('click_toggle_left_drawer', toggleLeftDrawer )
 }
+export const clickToggleSearch=({ commit, isShowSearch })=> {
+  commit('click_toogle_search', isShowSearch )
+}
