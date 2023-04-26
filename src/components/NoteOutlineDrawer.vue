@@ -1,5 +1,5 @@
 <template>
-  <q-drawer
+  <!-- <q-drawer
     v-model="toggleLeftDrawer"
     :value='false'
     :mini-width='200'
@@ -10,7 +10,8 @@
     elevated
     side='right'
     class='bg-blur'
-  >
+  > -->
+  <div class="scroll full-height noteoutlinedrawer">
     <q-scroll-area
       :thumb-style = "{display:'none'}"
       :bar-style= "{display:'none'}"
@@ -25,18 +26,21 @@
         :selected.sync='selected'
         :expanded.sync='expanded'
       />
+      <div>2222</div>
     </q-scroll-area>
     <q-icon
       name='close'
+      style="bottom:10px;right: 10px;"
       class="
-        absolute-bottom-right fab-icon cursor-pointer material-icons-round neeto-icon z-max
+      absolute-bottom-right fab-icon cursor-pointer material-icons-round neeto-icon z-max
       "
       @click='hide'
       size='24px'
       color='#26A69A'
       v-ripple
     />
-  </q-drawer>
+  </div>
+  <!-- </q-drawer> -->
 </template>
 
 <script>
@@ -65,4 +69,11 @@ export default {
 
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.noteoutlinedrawer{
+  position: relative;
+  padding: 0 28px;
+  // margin: 0 12px;
+  border-right: 1px solid #ddd;
+}
+</style>

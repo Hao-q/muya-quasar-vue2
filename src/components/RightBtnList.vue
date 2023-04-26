@@ -4,8 +4,11 @@
       class="absolute-top-right fab-icon cursor-pointer material-icons-round" size="md" color="#26A69A" v-ripple
       key="format_align_center" style="top:20px; right: 20px" @click="noteBtn">
     </q-btn>
+    <q-btn icon="save" class="absolute-bottom-right fab-icon cursor-pointer material-icons-round"
+      @click="saveNotesHandler"
+      style="bottom: 200px;right: 20px" dense flat round size="md" color="#26A69A" v-ripple title="保存" key="save" />
     <q-btn icon="dashboard" dense flat round class="absolute-bottom-right fab-icon cursor-pointer material-icons-round"
-      style="bottom: 200px;right: 20px;" size="md" color="#26A69A" v-ripple key="wordCount">
+      style="bottom: 150px;right: 20px;" size="md" color="#26A69A" v-ripple key="wordCount">
       <q-tooltip transition-show="fade" transition-hide="fade" anchor="center left" self="center right">
         <div class="text-body2">
           <p>
@@ -21,22 +24,17 @@
       </q-tooltip>
     </q-btn>
     <q-btn :icon="isSourceMode ? 'assignment' : 'code'" dense flat round
-      class="absolute-bottom-right fab-icon cursor-pointer material-icons-round" style="bottom: 150px; right: 20px"
+      class="absolute-bottom-right fab-icon cursor-pointer material-icons-round" style="bottom: 100px; right: 20px"
       size="md" color="#26A69A" v-ripple key="source_code" :title="!isSourceMode ? '源代码模式' : '预览模式'" @click="changeMode">
     </q-btn>
     <q-btn :icon='enablePreviewEditor ? "lock_open" : "lock"' dense flat round
-      class='absolute-bottom-right fab-icon cursor-pointer material-icons-round' style='bottom: 100px;right: 20px;'
+      class='absolute-bottom-right fab-icon cursor-pointer material-icons-round' style='bottom: 50px;right: 20px;'
       @click='lockModeHandler' size='md' color='#26A69A'  v-ripple key='lock'
       :title="enablePreviewEditor ? '锁定笔记' : '解锁笔记'" />
-    <q-btn icon="save" class="absolute-bottom-right fab-icon cursor-pointer material-icons-round"
-      @click="saveNotesHandler"
-      style="bottom: 50px;right: 20px" dense flat round size="md" color="#26A69A" v-ripple title="保存" key="save" />
-    <NoteOutlineDrawer></NoteOutlineDrawer>
   </div>
 </template>
 
 <script>
-import NoteOutlineDrawer from './NoteOutlineDrawer.vue'
 import { createNamespacedHelpers } from 'vuex'
 const {
   mapState: mapSettingState,
@@ -44,15 +42,12 @@ const {
 } = createNamespacedHelpers('setting')
 export default {
   name: 'RightBtnList',
-  components: {
-    NoteOutlineDrawer
-  },
   data() {
     return {
     }
   },
   computed: {
-    ...mapSettingState(['toggleLeftDrawer', 'isSourceMode','enablePreviewEditor'])
+    ...mapSettingState(['toggleLeftDrawer', 'isSideBarShow', 'isSourceMode','enablePreviewEditor'])
   },
   methods: {
     // 切换预览模式
@@ -68,6 +63,10 @@ export default {
     // 切换右侧目录窗口
     noteBtn: function () {
       this.$store.commit('setting/click_toggle_left_drawer', !this.toggleLeftDrawer)
+      // if(this.isSideBarShow && this.toggleLeftDrawer){
+      // this.$store.commit('setting/click_tabs_side', false)
+
+      // }
     },
     //锁定切换
     lockModeHandler: function() {

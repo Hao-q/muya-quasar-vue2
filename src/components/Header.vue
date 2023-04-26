@@ -1,4 +1,5 @@
 <template>
+  <div>
     <q-header class="header bg-black">
       <!-- 3333 -->
       <div class="text-grey show-left" >
@@ -12,15 +13,9 @@
               color='#26A69A'
               v-ripple
               @click="showAndHideSearch"
-              key='format_align_center'
             />
-      </div>
-      
-      <div class="text-grey show-hide">
-
-        <!-- <div>{{ store.counter  }} {{counter }}</div> -->
-        <q-btn
-              icon='table_chart'
+            <q-btn
+              
               dense
               flat
               round
@@ -29,44 +24,123 @@
               color='#26A69A'
               v-ripple
               @click="showAndHide"
-              key='format_align_center'
+            >
+            开关
+            </q-btn>
+            <q-btn
+              icon=''
+              dense
+              flat
+              round
+              class='fab-icon cursor-pointer material-icons-round'
+              size='md'
+              color='#26A69A'
+              v-ripple
+              @click="$refs.ImportDialog.toggle()"
+            >
+            导入
+            </q-btn>
+            <q-btn
+              icon=''
+              dense
+              flat
+              round
+              class='fab-icon cursor-pointer material-icons-round'
+              size='md'
+              color='#26A69A'
+              v-ripple
+              @click="showAutoSave"
+            >
+            自动保存
+            </q-btn>
+            <q-btn
+              icon=''
+              dense
+              flat
+              round
+              class='fab-icon cursor-pointer material-icons-round'
+              size='md'
+              color='#26A69A'
+              v-ripple
+              @click="showSync"
+            >
+            同步
+            </q-btn>
+      </div>
+      
+      <div class="text-grey show-hide">
+
+        <!-- <div>{{ store.counter  }} {{counter }}</div> -->
+        <q-btn
+              icon='settings'
+              dense
+              flat
+              round
+              class='fab-icon cursor-pointer material-icons-round'
+              size='md'
+              color='#26A69A'
+              v-ripple
+              @click="showSetting"
             />
       </div>
     </q-header>
+    <ImportDialog ref="ImportDialog"></ImportDialog>
+    <AutoSaveDialog ref="autoSaveVisibleRef"></AutoSaveDialog>
+    <SettingsDialog ref="settingsVisibleRef"></SettingsDialog>
+  </div>
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
 import { getUserInfo } from 'src/api/setting'
+import ImportDialog from './dialog/ImportDialog.vue'
+import AutoSaveDialog from './dialog/AutoSaveDialog.vue'
+import SettingsDialog from './dialog/SettingsDialog.vue'
 const {
   mapState: mapSettingState,
   mapActions: mapSettingActions
 } = createNamespacedHelpers('setting')
 export default {
-  data(){
-    return{
-      isShow:false
-    }
-  },
-  computed:{
-    ...mapSettingState(['isSideBarShow','isShowSearch'])
-  },
-  created(){
-    this.getUserInfoData()
-  },
-  methods:{
-    showAndHide: function(){
-      this.$store.commit('setting/click_tabs_side',!this.isSideBarShow)   
+    data() {
+        return {
+            isShow: false
+        };
     },
-    async getUserInfoData(){
-      await getUserInfo('/list/risk').then(res=>{
-        console.log(res);
-      })
+    components: { ImportDialog, AutoSaveDialog, SettingsDialog },
+    computed: {
+        ...mapSettingState(["isSideBarShow", "isShowSearch", "toggleLeftDrawer"])
     },
-    showAndHideSearch(){
-      this.$store.commit('setting/click_toogle_search', !this.isShowSearch)
-    }
-  }
+    created() {
+        this.getUserInfoData();
+    },
+    methods: {
+        showAndHide: function () {
+            // if (this.isSideBarShow && this.toggleLeftDrawer) {
+            //     this.$store.commit("setting/click_tabs_side", this.isSideBarShow);
+            //     this.$store.commit("setting/click_toggle_left_drawer", false);
+            // }
+            // else {
+                this.$store.commit("setting/click_tabs_side", !this.isSideBarShow);
+                // this.$store.commit("setting/click_toggle_left_drawer", !this.toggleLeftDrawer);
+            // }
+        },
+        async getUserInfoData() {
+            await getUserInfo("/list/risk").then(res => {
+                console.log(res);
+            });
+        },
+        showAndHideSearch() {
+            this.$store.commit("setting/click_toogle_search", !this.isShowSearch);
+        },
+        showAutoSave() {
+          this.$refs.autoSaveVisibleRef.showDialog()
+        },
+        showSync() {
+        },
+        showSetting() {
+          this.$refs.settingsVisibleRef.showDialog()
+        }
+    },
 }
 </script>
 <style scoped lang="scss">

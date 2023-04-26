@@ -47,6 +47,9 @@ export default {
 
       this.editor = new Muya(ele, {
         markdown: "在这里编辑...",
+        imagePathPicker: (e) => {
+          console.log(e);
+        }
       });
       this.editor.on("change", (changes) => {
         console.log(changes);
@@ -59,6 +62,21 @@ export default {
         bus.$emit('muyaData', this.muyaData)
        
       });
+      // const { container } = this.contentEditor = new Muya(ele, {
+      //   // imagePathPicker: () => {
+      //     // return new Promise((resolve, reject) => {
+      //       // this.importImageFromLocal().then(paths => {
+      //       //   debugLogger.Info(paths)
+      //       //   resolve(paths ? paths[0] : '')
+      //       // }).catch(err => {
+      //       //   debugLogger.Error(err)
+      //       //   reject(err)
+      //       // })
+      //     // })
+      //   // },
+      //   // imageAction: this.uploadImage
+      // })
+      // console.log(container);
     });
   },
 }

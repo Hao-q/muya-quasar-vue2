@@ -13,17 +13,19 @@
       <!-- 左侧列表 -->
       <template v-slot:before>
         <!-- 动画效果 -->
-        <transition
+        <!-- <transition-group
+
           appear
           enter-active-class="animated fadeIn"
           leave-active-class="animated fadeOut"
-        >
-          <Sidebar></Sidebar>
-        </transition>
+        >  -->
+          <Sidebar key="sidebar" v-if="tabaListShow"></Sidebar>
+          <NoteOutlineDrawer key="note_outline_drawer" v-else></NoteOutlineDrawer>
+        <!-- </transition-group> -->
       </template>
       <!-- 右侧主内容区 -->
       <template v-slot:after>
-        <div class="full-height">
+        <div class="full-height mian_content">
           <!-- muya -->
           <!-- 代码编辑器 --> 
           <div class="my_dom" v-show="!isSourceMode">
@@ -65,6 +67,7 @@ import RightBtnList from "../components/RightBtnList.vue";
 import muya from "../components/muyaView.vue"
 import bus from '../components/bus'
 import { createNamespacedHelpers } from "vuex";
+import NoteOutlineDrawer from "src/components/NoteOutlineDrawer.vue";
 const { mapState: mapSettingState, mapActions: mapSettingActions } =
   createNamespacedHelpers("setting");
 export default {
@@ -74,7 +77,8 @@ export default {
     monaco,
     Sidebar,
     RightBtnList,
-  },
+    NoteOutlineDrawer
+},
   data() {
     return {
       opts: {
@@ -87,12 +91,13 @@ export default {
       containerReload: true,
       splitterWidthValue: 30,
       splitterLimits: [0, 60],
-      muyaData:{}
+      muyaData:{},
+      tabaListShow:true
       // isShow:false
     };
   },
   computed: {
-    ...mapSettingState(["isSideBarShow", "isSourceMode"]),
+    ...mapSettingState(["isSideBarShow", "isSourceMode",'toggleLeftDrawer','enablePreviewEditor']),
   },
   provide() {
     return {
@@ -101,19 +106,47 @@ export default {
   },
   watch: {
     isSideBarShow: function (currentData) {
-      if (currentData) {
-        this.splitterLimits = [0, 60];
-        this.splitterWidthValue = 30;
-      } else {
+      this.splitterLimits = [0, 60];
+      this.splitterWidthValue = 30;
+      if(currentData && this.toggleLeftDrawer){
+        this.tabaListShow = true
+      }else if(currentData && !this.toggleLeftDrawer){
+        this.tabaListShow = true
+      }else if(!currentData && this.toggleLeftDrawer){
+        this.tabaListShow = false
+      }else{
+        this.tabaListShow = false
         this.splitterLimits = [0, 0];
         this.splitterWidthValue = 0;
       }
     },
+    toggleLeftDrawer:function (currentData) {
+      this.splitterLimits = [0, 60];
+      this.splitterWidthValue = 30;
+      if(currentData && this.isSideBarShow){
+        this.tabaListShow = false
+      }else if(currentData && !this.isSideBarShow){
+        this.tabaListShow = false
+      }else if(!currentData && this.isSideBarShow){
+        this.tabaListShow = true
+      }else{
+        this.tabaListShow = true
+        this.splitterLimits = [0, 0];
+        this.splitterWidthValue = 0;
+
+      }
+    },
+    enablePreviewEditor:function(currentData){
+      document.querySelector('.ag-show-quick-insert-hint').setAttribute('contenteditable', currentData)    
+    }
   },
   methods: {
     changeValue(val) {
       console.log(val);
       bus.$emit('muyaData',val)
+    },
+    notehide(){
+      this.$store.commit('setting/click_toggle_left_drawer',false)
     },
     changeMode() {},
     async reload() {
@@ -128,12 +161,17 @@ export default {
 .my_dom{
   height: 93.5vh;
   overflow: auto;
+  width: 100%;
 }
 .monaco_dom{
-  max-width: 85%;
+  width: 85%;
+  /* max-width: 85%; */
   min-width: 400px;
   min-height: 100%;
   height: 90vh;
   margin: 0 auto;
+}
+.mian_content{
+  display: flex;
 }
 </style>
