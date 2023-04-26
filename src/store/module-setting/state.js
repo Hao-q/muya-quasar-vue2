@@ -4,6 +4,8 @@ export default function () {
     isSourceMode: false, //切换代码和预览按钮
     toggleLeftDrawer: false, //右侧文章目录弹窗
     enablePreviewEditor: false, //切换笔记锁定
-    isShowSearch: false //显示隐藏搜索框
+    isShowSearch: false, //显示隐藏搜索框
+    tabaListShow: true,
+    isAnnexShow: false //显示附件列表
   }
 }

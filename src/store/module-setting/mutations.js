@@ -13,3 +13,9 @@ export const click_enable_preview_editor =(state, payload) =>{
 export const click_toogle_search =(state, payload) =>{
   state.isShowSearch = payload
 }
+export const taba_list_show =(state, payload) =>{
+  state.tabaListShow = payload
+}
+export const click_annex_show =(state, payload) =>{
+  state.isAnnexShow = payload
+}

@@ -1,6 +1,6 @@
 <template>
-  <!-- <q-drawer
-    v-model="toggleLeftDrawer"
+  <q-drawer
+    v-model="isAnnexShow"
     :value='false'
     :mini-width='200'
     :breakpoint='700'
@@ -10,25 +10,16 @@
     elevated
     side='right'
     class='bg-blur'
-  > -->
-  <div class="scroll full-height noteoutlinedrawer">
+  >
+  <div class="scroll full-height">
     <q-scroll-area
       :thumb-style = "{display:'none'}"
       :bar-style= "{display:'none'}"
       class="exclude-header note-list fit"
     >
-      <q-tree
-        :nodes='contentsList ? contentsList : []'
-        ref='tree'
-        node-key='key'
-        default-expand-all
-        class='non-selectable z-max'
-        :selected.sync='selected'
-        :expanded.sync='expanded'
-      />
-      <div>2222</div>
+      <div>附件列表</div>
     </q-scroll-area>
-    <!-- <q-icon
+    <q-icon
       name='close'
       style="bottom:10px;right: 10px;"
       class="
@@ -38,9 +29,9 @@
       size='24px'
       color='#26A69A'
       v-ripple
-    /> -->
+    />
   </div>
-  <!-- </q-drawer> -->
+  </q-drawer>
 </template>
 
 <script>
@@ -52,17 +43,14 @@ const {
 export default {
   data(){
     return{
-      contentsList:[{},{}],
-      selected:'',
-      expanded:[],
     }
   },
   computed:{
-    ...mapSettingState(['toggleLeftDrawer'])
+    ...mapSettingState(['isAnnexShow'])
   },
   methods:{
     hide(){
-      this.$store.commit('setting/click_toggle_left_drawer',!this.toggleLeftDrawer)
+      this.$store.commit('setting/click_annex_show',!this.isAnnexShow)
     }
   }
 }

@@ -17,12 +17,13 @@
           <q-item-section>
             <div @contextmenu.prevent="openMenu($event, item,index)" class="sidebar_list">
               <div v-if="!item.isEditName" class="note-item-title" v-html="item.title"></div>
-              <q-input   @blur="saveName"  v-if="item.isEditName" class="note-item-title" v-model="item.title"  />
+              <input type="text" class="note-item-title inpstyle" v-if="item.isEditName"  v-model="item.title"  @blur="saveName">
+              <!-- <q-input  @blur="saveName"  v-if="item.isEditName" class="note-item-title" v-model="item.title"  /> -->
               <div class="note-item-summary text-grey-7" v-html="item.summary"></div>
 
               <div class="flex justify-between no-wrap overflow-hidden fa-align-center text-grey-7">
                 <span v-if="!item.isEditfolder" class="text-left note-info-tag"><q-icon name="category" size="17px" /> {{item.folder}}</span>
-                <q-select size="md" v-if="item.isEditfolder"  @input="saveFolder"  v-model="item.folder" :options="options" />
+                <q-select dense size="md" v-if="item.isEditfolder"  @input="saveFolder"  v-model="item.folder" :options="options" />
                 <span class="text-right note-info-tag"><q-icon name="timer" size="17px" /> {{ "2022-1-1" }}</span>
               </div>
             </div>
@@ -191,7 +192,9 @@ export default {
 <style lang="scss" scoped>
 .note-item-title {
   font-size: 18px;
-  padding-bottom: 6px;
+  height: 34px;
+  line-height: 34px;
+  margin-bottom: 6px;
   font-weight: 900;
   color: #3e3d3d;
 }
@@ -201,8 +204,21 @@ export default {
 }
 
 .sidebar_list {
-  padding: 10px 12px;
+  padding: 6px 12px;
 }
+.inpstyle{
+  border: none;
+  background: none;
+  border-bottom: 1px solid;
+  padding: 0;
+  margin-bottom: 10px;
+  height: 34px;
+  margin-bottom: 6px;
+}
+.inpstyle:focus-visible{
+  outline: none;
+}
+
 
 .contextmenu {
   margin: 0;
