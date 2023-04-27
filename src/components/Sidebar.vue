@@ -164,7 +164,7 @@ export default {
       this.$set(this.listitems[this.currentIndex], 'isEditfolder', true)
       this.menuVisible = false;
     },
-    saveFolder(value){
+    saveFolder(value){                                                                      
       this.$set(this.listitems[this.currentIndex], 'folder', value.label)
       this.$set(this.listitems[this.currentIndex], 'isEditfolder', false)
     },
@@ -177,6 +177,12 @@ export default {
           cancel: "取消",
         })
         .onOk(() => { });
+    },
+    exportMarkdown(){
+
+    },
+    exportPng(){
+
     },
     toDetails(item) {
       console.log(item);

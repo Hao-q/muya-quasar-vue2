@@ -11,13 +11,16 @@
     side='right'
     class='bg-blur'
   >
-  <div class="scroll full-height">
+  <div class="scroll full-height annexDrawer">
     <q-scroll-area
       :thumb-style = "{display:'none'}"
       :bar-style= "{display:'none'}"
       class="exclude-header note-list fit"
     >
-      <div>附件列表</div>
+      <h3>附件列表</h3>
+      <div>
+        
+      </div>
     </q-scroll-area>
     <q-icon
       name='close'
@@ -58,10 +61,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.noteoutlinedrawer{
-  position: relative;
-  padding: 0 28px;
+.annexDrawer{
+  // position: relative;
+  padding:  0 14px 14px;
   // margin: 0 12px;
-  border-right: 1px solid #ddd;
+  // border-right: 1px solid #ddd;
 }
 </style>
